@@ -1,15 +1,9 @@
-// import { LoginForm } from './components/login-form'
-// import Landing from './pages/Landing'
-
-import Products from './pages/Products'
+import { RouterProvider } from 'react-router'
+import { router } from './routes/router'
 
 const App = () => {
   return (
-    <>
-      {/* <LoginForm /> */}
-      {/* <Landing /> */}
-      <Products />
-    </>
+    <RouterProvider router={router} />
   )
 }
 
