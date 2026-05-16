@@ -40,7 +40,7 @@ const Home = () => {
 
                     {/* Premium Hero Graphic Container */}
                     <div className="relative order-1 lg:order-2 w-full max-w-lg mx-auto lg:max-w-none">
-                        <div className="relative aspect-[4/5] sm:aspect-video lg:aspect-[4/5] rounded-3xl overflow-hidden bg-muted shadow-2xl border border-border/50">
+                        <div className="relative aspect-4/5 sm:aspect-video lg:aspect-4/5 rounded-3xl overflow-hidden bg-muted shadow-2xl border border-border/50">
                             <img
                                 src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80"
                                 alt="Modern storefront"
@@ -72,7 +72,7 @@ const Home = () => {
                         <Link to={`/categories/${category.name.toLowerCase()}`} key={category.name} className="group block">
                             <Card className="overflow-hidden border-border bg-card transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full">
                                 {/* Image Container */}
-                                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                                <div className="relative aspect-4/3 overflow-hidden bg-muted">
                                     <img
                                         src={category.image}
                                         alt={category.name}

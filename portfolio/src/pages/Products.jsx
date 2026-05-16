@@ -89,8 +89,8 @@ const Products = () => {
 
     return (
         <>
-            <ProductsHeader searchHandler={searchHandler} catSelectHandler={setProductsUrl} categories={categories} isLoading={isCLoading} error={cError} />
             <Breadcrumbs />
+            <ProductsHeader searchHandler={searchHandler} catSelectHandler={setProductsUrl} categories={categories} isLoading={isCLoading} error={cError} />
             {error && <ProductError message={error} />}
             {
                 isLoading ?
@@ -111,6 +111,7 @@ const Products = () => {
                                         brand={product.brand}
                                         description={product.description}
                                         image={product.images[0]}
+                                        id={product.id}
                                     />
                                 }
 

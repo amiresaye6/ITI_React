@@ -1,5 +1,7 @@
 import Main from "@/layouts/main";
+import { productDetailsLoader } from "@/loaders/productDetailsLoader";
 import Home from "@/pages/Home";
+import { ErrorBoundary } from "@/pages/ProductDetails";
 
 import { createBrowserRouter } from "react-router";
 
@@ -35,10 +37,16 @@ export const router = createBrowserRouter([
                 lazy: async () => {
                     const module = await import('@/pages/ProductDetails');
                     return {
-                        Component: module.default,
-                    };
+                        Component: module.Component,
+                        loader: productDetailsLoader,
+                        ErrorBoundary: ErrorBoundary
+                    }
                 },
             },
+            // {
+            //     path: "/product/:id",
+            //     lazy: () => import('@/pages/ProductDetails'),
+            // },
             {
                 path: "/*",
                 lazy: async () => {

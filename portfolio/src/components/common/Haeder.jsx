@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router"
 import { Button } from "@/components/ui/button"
-import { ShoppingBag, Search, User } from "lucide-react"
+import { ShoppingBag, User } from "lucide-react"
 
 const Header = () => {
     const linkStyles = ({ isActive }) =>
@@ -34,24 +34,23 @@ const Header = () => {
 
                 {/* Actions Block using Lucide Icons */}
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-                        <Search className="h-5 w-5" />
-                        <span className="sr-only">Search</span>
-                    </Button>
-
                     <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
-                        <ShoppingBag className="h-5 w-5" />
-                        <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary" />
-                        <span className="sr-only">Cart</span>
+                        <Link to="/cart">
+                            <ShoppingBag className="h-5 w-5" />
+                            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary" />
+                            <span className="sr-only">Cart</span>
+                        </Link>
                     </Button>
 
                     <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hidden sm:inline-flex">
-                        <User className="h-5 w-5" />
-                        <span className="sr-only">Account</span>
+                        <Link to="/account">
+                            <User className="h-5 w-5" />
+                            <span className="sr-only">Account</span>
+                        </Link>
                     </Button>
 
                     <Button size="sm" className="ml-2 hidden sm:inline-flex">
-                       <Link to="/login">Sign In</Link>
+                        <Link to="/login">Sign In</Link>
                     </Button>
                 </div>
             </div>
