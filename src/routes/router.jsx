@@ -33,7 +33,7 @@ export const router = createBrowserRouter([
                 },
             },
             {
-                path: "/product/:id",
+                path: "/product/:slug/:id",
                 lazy: async () => {
                     const module = await import('@/pages/ProductDetails');
                     return {

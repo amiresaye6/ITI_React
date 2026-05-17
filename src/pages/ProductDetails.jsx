@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import ReviewCard from "@/components/common/ReviewCard";
 import Spinner from "@/components/products/spinner/Spinner";
+import { useState } from "react";
 
 
 export const ErrorBoundary = () => {
@@ -33,6 +34,39 @@ export const ErrorBoundary = () => {
 export const Component = () => {
     const { product } = useLoaderData();
     const navigation = useNavigation();
+
+    const [inCart, setInCart] = useState(false);
+    const addToCartHandler = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const items = await JSON.parse(localStorage.getItem("cart")) || [];
+
+        const itemInCart = items.filter(i => i.id === product.id);
+        if (itemInCart.length > 0) {
+            items.map(item => {
+                if (item.id === product.id) {
+                    item.count += 1;
+                }
+            })
+            console.log("increase count only");
+
+        } else {
+
+            items.push({
+                ...product,
+                count: 1,
+            });
+
+            console.log("add new item to cart");
+        }
+
+        await localStorage.setItem("cart", JSON.stringify(items));
+        setInCart(true);
+
+
+    }
+
 
     if (navigation.state === "loading") {
         return <Spinner />;
@@ -125,9 +159,9 @@ export const Component = () => {
                                 Minimum order quantity: {product.minimumOrderQuantity} units
                             </p>
                         )}
-                        <Button size="lg" className="w-full sm:w-auto h-14 text-lg gap-2">
+                        <Button size="lg" className="w-full sm:w-auto h-14 text-lg gap-2" disabled={inCart} onClick={(e) => addToCartHandler(e)}>
                             <ShoppingCart className="h-5 w-5" />
-                            Add to Cart
+                            {inCart ? "In Cart" : "Add to Cart"}
                         </Button>
                     </div>
 

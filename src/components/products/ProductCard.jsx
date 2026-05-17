@@ -10,10 +10,54 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Link } from "react-router"
+import { useState } from "react"
 
 const ProductCard = ({ title, category, price, rating, stock, tags, brand, image, description, id }) => {
+
+    const [inCart, setInCart] = useState(false);
+
+    const addToCartHandler = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const items = await JSON.parse(localStorage.getItem("cart")) || [];
+
+        const itemInCart = items.filter(i => i.id === id);
+        if (itemInCart.length > 0) {
+            items.map(item => {
+                if (item.id === id) {
+                    item.count += 1;
+                }
+            })
+            console.log("increase count only");
+
+        } else {
+
+            items.push({
+                title,
+                category,
+                price,
+                rating,
+                stock,
+                tags,
+                brand,
+                image,
+                description,
+                id,
+                count: 1,
+            });
+
+            console.log("add new item to cart");
+        }
+
+        localStorage.setItem("cart", JSON.stringify(items));
+        setInCart(true);
+
+
+    }
+
     return (
-        <Link to={`/product/${id}`}>
+        <Link to={`/product/${title.slice(0, 30).toLowerCase().split(" ").join("_") || "slug_" + id}/${id}`}>
             <Card className="group overflow-hidden transition-all hover:shadow-lg max-w-sm pt-0">
                 <div className="relative aspect-square overflow-hidden bg-muted top-0">
                     <img
@@ -59,9 +103,12 @@ const ProductCard = ({ title, category, price, rating, stock, tags, brand, image
 
                 <CardFooter className="flex items-center justify-between pt-4">
                     <span className="text-2xl font-bold">${price}</span>
-                    <Button size="sm" className="gap-2">
+                    <Button size="sm" className="gap-2"
+                        onClick={(e) => addToCartHandler(e)}
+                    //   disabled={inCart}
+                    >
                         <ShoppingCart className="h-4 w-4" />
-                        Add to Cart
+                        {inCart ? "In Cart" : "Add to Cart"}
                     </Button>
                 </CardFooter>
             </Card>
