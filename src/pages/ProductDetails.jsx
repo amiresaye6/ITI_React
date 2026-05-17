@@ -1,16 +1,17 @@
 import { useLoaderData, useNavigation, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { 
-    Star, 
-    Truck, 
-    ShieldCheck, 
-    RotateCcw, 
-    Package, 
+import {
+    Star,
+    Truck,
+    ShieldCheck,
+    RotateCcw,
+    Package,
     ShoppingCart,
     AlertCircle
 } from "lucide-react";
+import ReviewCard from "@/components/common/ReviewCard";
+import Spinner from "@/components/products/spinner/Spinner";
 
 
 export const ErrorBoundary = () => {
@@ -29,40 +30,12 @@ export const ErrorBoundary = () => {
 };
 
 
-const ProductSkeleton = () => {
-    return (
-        <div className="mx-auto max-w-7xl px-6 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                {/* Image Skeleton */}
-                <Skeleton className="aspect-square rounded-2xl w-full" />
-                
-                {/* Details Skeleton */}
-                <div className="flex flex-col gap-6">
-                    <div className="space-y-3">
-                        <Skeleton className="h-6 w-24" />
-                        <Skeleton className="h-10 w-3/4" />
-                        <Skeleton className="h-6 w-1/3" />
-                    </div>
-                    <Skeleton className="h-24 w-full" />
-                    <Skeleton className="h-12 w-48" />
-                    <Skeleton className="h-12 w-full mt-4" />
-                    <div className="grid grid-cols-2 gap-4 mt-6">
-                        <Skeleton className="h-20 w-full" />
-                        <Skeleton className="h-20 w-full" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-
 export const Component = () => {
     const { product } = useLoaderData();
     const navigation = useNavigation();
 
     if (navigation.state === "loading") {
-        return <ProductSkeleton />;
+        return <Spinner />;
     }
 
     const originalPrice = (product.price / (1 - product.discountPercentage / 100)).toFixed(2);
@@ -70,13 +43,13 @@ export const Component = () => {
     return (
         <div className="mx-auto max-w-7xl px-6 py-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-                
+
                 {/* Left Column: Image Gallery */}
                 <div className="flex flex-col gap-4">
                     <div className="aspect-square bg-muted rounded-3xl overflow-hidden border border-border flex items-center justify-center p-8">
-                        <img 
-                            src={product.images[0]} 
-                            alt={product.title} 
+                        <img
+                            src={product.images[0]}
+                            alt={product.title}
                             className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal"
                         />
                     </div>
@@ -93,7 +66,7 @@ export const Component = () => {
 
                 {/* Right Column: Product Details */}
                 <div className="flex flex-col gap-8">
-                    
+
                     {/* Header Info */}
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-wrap items-center gap-2">
@@ -108,11 +81,11 @@ export const Component = () => {
                                 <Badge variant="destructive">Out of Stock</Badge>
                             )}
                         </div>
-                        
+
                         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
                             {product.title}
                         </h1>
-                        
+
                         <div className="flex items-center gap-2 mt-1">
                             <div className="flex text-yellow-400">
                                 {/* Simple Star Rating visualizer */}
@@ -199,24 +172,11 @@ export const Component = () => {
                 <h2 className="text-2xl font-bold tracking-tight mb-8">Customer Reviews</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {product.reviews.map((review, idx) => (
-                        <div key={idx} className="p-6 rounded-2xl bg-muted/50 border border-border flex flex-col gap-3">
-                            <div className="flex justify-between items-start">
-                                <span className="font-semibold">{review.reviewerName}</span>
-                                <span className="text-xs text-muted-foreground">
-                                    {new Date(review.date).toLocaleDateString()}
-                                </span>
-                            </div>
-                            <div className="flex text-yellow-400">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star key={i} className={`h-4 w-4 ${i < review.rating ? "fill-current" : "text-muted stroke-muted-foreground"}`} />
-                                ))}
-                            </div>
-                            <p className="text-sm text-muted-foreground">"{review.comment}"</p>
-                        </div>
+                        <ReviewCard idx={idx} review={review} />
                     ))}
                 </div>
             </div>
-            
+
         </div>
     );
 };
