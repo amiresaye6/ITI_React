@@ -9,12 +9,62 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
+import { useState } from "react"
+import { z } from "zod"
+
+const registerSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  username: z.string().min(1, "Username is required").regex(/^\S+$/, "Username must not contain spaces"),
+  email: z.string().email("Invalid email format"),
+  password: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/\d/, "Password must contain at least one digit")
+    .regex(/[@$!%*?&#]/, "Password must contain at least one special character"),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"]
+});
 
 export function Signup({
   className,
   ...props
 }) {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const result = registerSchema.safeParse(formData);
+    
+    if (!result.success) {
+      const formattedErrors = {};
+      result.error.issues.forEach(issue => {
+        formattedErrors[issue.path[0]] = issue.message;
+      });
+      setErrors(formattedErrors);
+    } else {
+      setErrors({});
+      alert(JSON.stringify(formData, null, 2));
+      navigate('/products');
+    }
+  };
+
   return (
 
     <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
@@ -22,40 +72,55 @@ export function Signup({
         <div className={cn("flex flex-col gap-6", className)} {...props}>
           <Card className="overflow-hidden p-0">
             <CardContent className="grid p-0 md:grid-cols-2">
-              <form className="p-6 md:p-8">
+              <form className="p-6 md:p-8" onSubmit={handleSubmit}>
                 <FieldGroup>
-                  <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="flex flex-col items-center gap-2 text-center mb-4">
                     <h1 className="text-2xl font-bold">Create your account</h1>
                     <p className="text-sm text-balance text-muted-foreground">
-                      Enter your email below to create your account
+                      Fill in the details below to register
                     </p>
                   </div>
+                  
+                  <Field>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input id="name" type="text" placeholder="John Doe" value={formData.name} onChange={handleChange} />
+                    {errors.name && <FieldDescription className="text-destructive font-medium">{errors.name}</FieldDescription>}
+                  </Field>
+
+                  <Field>
+                    <FieldLabel htmlFor="username">Username</FieldLabel>
+                    <Input id="username" type="text" placeholder="johndoe123" value={formData.username} onChange={handleChange} />
+                    {errors.username && <FieldDescription className="text-destructive font-medium">{errors.username}</FieldDescription>}
+                  </Field>
+
                   <Field>
                     <FieldLabel htmlFor="email">Email</FieldLabel>
-                    <Input id="email" type="email" placeholder="m@example.com" required />
-                    <FieldDescription>
-                      We&apos;ll use this to contact you. We will not share your
-                      email with anyone else.
-                    </FieldDescription>
+                    <Input id="email" type="text" placeholder="m@example.com" value={formData.email} onChange={handleChange} />
+                    {errors.email && <FieldDescription className="text-destructive font-medium">{errors.email}</FieldDescription>}
                   </Field>
+
                   <Field>
                     <Field className="grid grid-cols-2 gap-4">
                       <Field>
                         <FieldLabel htmlFor="password">Password</FieldLabel>
-                        <Input id="password" type="password" required />
+                        <Input id="password" type="password" value={formData.password} onChange={handleChange} />
                       </Field>
                       <Field>
-                        <FieldLabel htmlFor="confirm-password">
-                          Confirm Password
-                        </FieldLabel>
-                        <Input id="confirm-password" type="password" required />
+                        <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
+                        <Input id="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} />
                       </Field>
                     </Field>
-                    <FieldDescription>
-                      Must be at least 8 characters long.
-                    </FieldDescription>
+                    {errors.password ? (
+                      <FieldDescription className="text-destructive font-medium">{errors.password}</FieldDescription>
+                    ) : (
+                      <FieldDescription>Must be at least 8 characters long, include uppercase, lowercase, digit, and special char.</FieldDescription>
+                    )}
+                    {errors.confirmPassword && (
+                      <FieldDescription className="text-destructive font-medium">{errors.confirmPassword}</FieldDescription>
+                    )}
                   </Field>
-                  <Field>
+
+                  <Field className="mt-2">
                     <Button type="submit">Create Account</Button>
                   </Field>
                   <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">

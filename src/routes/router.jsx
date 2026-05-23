@@ -2,13 +2,15 @@ import Main from "@/layouts/main";
 import { productDetailsLoader } from "@/loaders/productDetailsLoader";
 import Home from "@/pages/Home";
 import { ErrorBoundary } from "@/pages/ProductDetails";
+import ProductError from "@/components/products/ProductError";
 
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, useRouteError } from "react-router";
 
 export const router = createBrowserRouter([
     {
         path: "/",
         element: <Main />,
+        errorElement: <ProductError message="An unexpected error occurred." />,
         children: [
             {
                 path: "/",
@@ -16,6 +18,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "/products",
+                errorElement: <ProductError />,
                 lazy: async () => {
                     const module = await import('@/pages/Products');
                     return {
