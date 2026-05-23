@@ -13,6 +13,8 @@ import {
 import ReviewCard from "@/components/common/ReviewCard";
 import Spinner from "@/components/products/spinner/Spinner";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/store/cartSlice";
 
 
 export const ErrorBoundary = () => {
@@ -36,35 +38,14 @@ export const Component = () => {
     const navigation = useNavigation();
 
     const [inCart, setInCart] = useState(false);
-    const addToCartHandler = async (e) => {
+    const dispatch = useDispatch();
+
+    const addToCartHandler = (e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        const items = await JSON.parse(localStorage.getItem("cart")) || [];
-
-        const itemInCart = items.filter(i => i.id === product.id);
-        if (itemInCart.length > 0) {
-            items.map(item => {
-                if (item.id === product.id) {
-                    item.count += 1;
-                }
-            })
-            console.log("increase count only");
-
-        } else {
-
-            items.push({
-                ...product,
-                count: 1,
-            });
-
-            console.log("add new item to cart");
-        }
-
-        await localStorage.setItem("cart", JSON.stringify(items));
+        dispatch(addToCart(product));
         setInCart(true);
-
-
     }
 
 

@@ -11,49 +11,32 @@ import {
 } from "@/components/ui/card"
 import { Link } from "react-router"
 import { useState } from "react"
+import { useDispatch } from "react-redux"
+import { addToCart } from "@/store/cartSlice"
 
 const ProductCard = ({ title, category, price, rating, stock, tags, brand, image, description, id }) => {
 
     const [inCart, setInCart] = useState(false);
+    const dispatch = useDispatch();
 
-    const addToCartHandler = async (e) => {
+    const addToCartHandler = (e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        const items = await JSON.parse(localStorage.getItem("cart")) || [];
+        dispatch(addToCart({
+            title,
+            category,
+            price,
+            rating,
+            stock,
+            tags,
+            brand,
+            image,
+            description,
+            id,
+        }));
 
-        const itemInCart = items.filter(i => i.id === id);
-        if (itemInCart.length > 0) {
-            items.map(item => {
-                if (item.id === id) {
-                    item.count += 1;
-                }
-            })
-            console.log("increase count only");
-
-        } else {
-
-            items.push({
-                title,
-                category,
-                price,
-                rating,
-                stock,
-                tags,
-                brand,
-                image,
-                description,
-                id,
-                count: 1,
-            });
-
-            console.log("add new item to cart");
-        }
-
-        localStorage.setItem("cart", JSON.stringify(items));
         setInCart(true);
-
-
     }
 
     return (

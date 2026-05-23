@@ -2,24 +2,21 @@ import CartItem from "@/components/cart/cartItem";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, ShoppingCart, ShieldCheck, Tag } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
+import { removeFromCart, updateQuantity } from "@/store/cartSlice";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem("cart")) || []);
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const dispatch = useDispatch();
 
   const handleUpdateQuantity = (id, newCount) => {
-    const updatedCart = cartItems.map(item =>
-      item.id === id ? { ...item, count: newCount } : item
-    );
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    dispatch(updateQuantity({ id, count: newCount }));
   };
 
   const handleRemove = (id) => {
-    const updatedCart = cartItems.filter(item => item.id !== id);
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    dispatch(removeFromCart(id));
   };
 
   const { subtotal, shipping, tax, total } = useMemo(() => {
